@@ -1,12 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieMatrix | Immersive Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>This is a movie </h1>
-    <script src="script.js"></script>
+  
+  <div class="app-container">
+    <!-- Cinematic Background -->
+    <div class="bg-layer" id="bg-layer"></div>
+    <div class="bg-vignette"></div>
+    
+    <!-- Minimal Header -->
+    <header class="glass-header">
+      <div class="logo">
+        <div class="logo-mark">MM</div>
+        <div class="logo-text">MOVIEMATRIX</div>
+      </div>
+      <div class="search-bar">
+        <svg class="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search titles, actors...">
+      </div>
+      <div class="nav-actions">
+        <button class="nav-btn icon-btn" title="Watchlist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </button>
+        <button class="nav-btn icon-btn" title="Profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Hero Content -->
+    <main class="hero-info" id="hero-info">
+      <div class="featured-badge">FEATURED FILM</div>
+      <h1 class="movie-title" id="active-title">Loading...</h1>
+      <div class="movie-meta">
+        <span class="meta-rating" id="active-rating">⭐ -.-</span>
+        <span class="meta-year" id="active-year">----</span>
+      </div>
+      <p class="movie-desc" id="active-desc"></p>
+      
+      <div class="action-buttons">
+        <button class="btn primary-btn" id="main-details-btn"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg> Details</button>
+        <button class="btn glass-btn">+ Watchlist</button>
+      </div>
+    </main>
+
+    <!-- Radial Wheel Container -->
+    <aside class="radial-sidebar" id="radial-area">
+      <div class="click-more-hint">Scroll to explore <br/> →</div>
+      <div class="radial-wheel" id="radial-wheel">
+         <!-- Javascript injects posters here -->
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Movie Details Modal -->
+  <div id="movie-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">✕</button>
+      
+      <!-- Modal Header (Backdrop + Details) -->
+      <div class="modal-header">
+        <div class="modal-backdrop-layer" id="modal-backdrop"></div>
+        <div class="modal-gradient"></div>
+        
+        <div class="modal-info-panel">
+          <div class="modal-poster">
+            <img src="" id="modal-poster-img" alt="Poster">
+          </div>
+          <div class="modal-text-content">
+            <h2 class="modal-title" id="modal-title">Title</h2>
+            <div class="modal-meta-row">
+              <span class="meta-rating pulse-anim" id="modal-rating">⭐</span>
+              <span class="meta-year" id="modal-year"></span>
+              <span class="meta-runtime" id="modal-runtime"></span>
+            </div>
+            <div class="modal-genres" id="modal-genres"></div>
+            <p class="modal-desc" id="modal-desc"></p>
+            
+            <div class="modal-actions">
+              <button class="btn primary-btn" id="modal-trailer-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg> Play Trailer
+              </button>
+              <button class="btn glass-btn" id="modal-watchlist-btn">+ Watchlist</button>
+              <button class="btn nav-btn icon-btn" title="Share" style="width: 50px; height: 50px; flex-shrink: 0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                  <polyline points="16 6 12 2 8 6"></polyline>
+                  <line x1="12" y1="2" x2="12" y2="15"></line>
+                </svg>
+              </button>
+            </div>
+            <p class="modal-director"><strong>Director:</strong> <span id="modal-director"></span></p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal Body (Cast & Similar) -->
+      <div class="modal-body-content">
+        <div class="modal-section-title">Cast</div>
+        <div class="horizontal-scroll" id="modal-cast"></div>
+
+        <div class="modal-section-title">Similar Movies</div>
+        <div class="horizontal-scroll" id="modal-similar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trailer Player Overlay embedded -->
+  <div class="trailer-overlay" id="trailer-overlay">
+     <div class="trailer-box">
+       <button class="trailer-close" id="trailer-close">✕ Close</button>
+       <div class="trailer-frame-wrap">
+          <iframe id="trailer-iframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+       </div>
+     </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
