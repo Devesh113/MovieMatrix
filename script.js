@@ -37,8 +37,12 @@ async function init() {
   // Animation Loop
   requestAnimationFrame(animateWheel);
 
-  // Scroll event
-  window.addEventListener("wheel", handleScroll, { passive: false });
+  // Scroll event - attach only to radial area to allow normal page scrolling elsewhere
+  els.radialArea.addEventListener("wheel", handleScroll, { passive: false });
+
+  // Load additional sections
+  await fetchRowContent(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}`, "trending-row");
+  await fetchRowContent(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}`, "top-rated-row");
 
   // Bind Main Details button
   $("main-details-btn").addEventListener("click", () => {
@@ -76,6 +80,34 @@ function buildWheel() {
       updateBackground(targetIndex);
     });
   });
+}
+
+async function fetchRowContent(url, containerId) {
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const container = $(containerId);
+    if (!container) return;
+    
+    container.innerHTML = (data.results || []).slice(0, 15).map(m => `
+      <div class="movie-card" data-id="${m.id}">
+        <img src="${m.poster_path ? IMG_W500 + m.poster_path : PLACEHOLDER}" alt="${m.title}" loading="lazy" onerror="this.src='${PLACEHOLDER}'">
+        <div class="card-info">
+          <div class="card-title">${m.title}</div>
+          <div class="card-meta">
+            <span>⭐ ${m.vote_average.toFixed(1)}</span>
+            <span>${m.release_date ? m.release_date.slice(0, 4) : ''}</span>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    container.querySelectorAll(".movie-card").forEach(card => {
+      card.addEventListener("click", () => openModal(card.dataset.id));
+    });
+  } catch (err) {
+    console.error("Failed to fetch row content", err);
+  }
 }
 
 function updateBackground(index) {
